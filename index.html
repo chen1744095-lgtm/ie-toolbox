@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IE Master Toolbox | 工業工程實務知識庫</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen font-sans">
+
+    <!-- 頂部導覽列 Navbar -->
+    <nav class="bg-slate-900 text-white shadow-md">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-xl font-bold tracking-wider text-sky-400">IE Master Toolbox</a>
+            <div class="space-x-6 text-sm font-medium">
+                <a href="index.html" class="text-sky-400 border-b-2 border-sky-400 pb-1">首頁與工具</a>
+                <a href="quality.html" class="hover:text-sky-300 transition">品質管理專區</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主內容區 -->
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-10 w-full">
+        <!-- Hero 區塊 -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 mb-8">
+            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-3 py-1 rounded-full">Industrial Engineering Knowledge Base</span>
+            <h1 class="text-3xl font-bold text-slate-900 mt-3 mb-2">工業工程實務知識庫與工具箱</h1>
+            <p class="text-slate-600 leading-relaxed">
+                整合品質管理（SQC / DMAIC）、生產排程與設施佈置規劃（SLP）等核心方法論，並提供現場快速試算工具，協助提升製程效率與標準化作業。
+            </p>
+        </section>
+
+        <!-- 核心領域卡片 -->
+        <h2 class="text-xl font-bold text-slate-800 mb-4">核心方法論模組</h2>
+        <div class="grid md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg text-slate-900 mb-2">品質管理 (SQC)</h3>
+                <p class="text-sm text-slate-600 mb-4">運用 QC 七大手法與統計製程管制，監控製程變異並降低不良率。</p>
+                <a href="quality.html" class="text-sky-600 text-sm font-semibold hover:underline">前往查看內容 →</a>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg text-slate-900 mb-2">系統化佈置規劃 (SLP)</h3>
+                <p class="text-sm text-slate-600">透過物流強度與作業關聯分析，最佳化廠房動線與搬運距離。</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg text-slate-900 mb-2">精實生產與 5S</h3>
+                <p class="text-sm text-slate-600">消除七大浪費（Muda），建立標準作業程序（SOP）與視覺化管理。</p>
+            </div>
+        </div>
+
+        <!-- 互動小工具：生產線平衡率計算機 -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
+            <h2 class="text-xl font-bold text-slate-900 mb-2">互動工具：生產線平衡率 (Line Balance) 試算</h2>
+            <p class="text-sm text-slate-600 mb-6">輸入各工作站週期時間（秒，以逗號分隔），快速計算瓶頸工時與線平衡率。</p>
+
+            <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                <input id="stationTimes" type="text" value="45, 52, 48, 60, 50" placeholder="例如: 45, 52, 48, 60, 50"
+                       class="flex-grow border border-slate-300 rounded-lg px-4 py-2 text-slate-800 focus:outline-none focus:border-sky-500">
+                <button onclick="calcBalance()"
+                        class="bg-sky-600 hover:bg-sky-700 text-white font-semibold px-6 py-2 rounded-lg transition">
+                    計算平衡率
+                </button>
+            </div>
+
+            <div id="resultBox" class="bg-slate-100 rounded-lg p-4 text-sm text-slate-700">
+                點擊「計算平衡率」查看分析結果。
+            </div>
+        </section>
+    </main>
+
+    <!-- 頁尾 Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-center py-6 text-sm mt-12">
+        <p>© 2026 IE Master Toolbox | Built with CLAUDE.md Architecture</p>
+    </footer>
+
+    <script>
+        function calcBalance() {
+        const input = document.getElementById('stationTimes').value;
+        const times = input.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n) && n > 0);
+        if (times.length === 0) {
+        document.getElementById('resultBox').innerHTML = '<span class="text-red-600 font-semibold">請輸入有效的正數時間（以逗號分隔）。</span>';
+        return;
+        }
+        const totalTime = times.reduce((a, b) => a + b, 0);
+        const bottleneck = Math.max(...times);
+        const stations = times.length;
+        const efficiency = ((totalTime / (stations * bottleneck)) * 100).toFixed(2);
+        const loss = (100 - efficiency).toFixed(2);
+
+        document.getElementById('resultBox').innerHTML = `
+        <div class="grid sm:grid-cols-3 gap-4 font-medium">
+        <div>工作站數：<span class="text-slate-900 font-bold">${stations} 站</span></div>
+        <div>瓶頸工時：<span class="text-rose-600 font-bold">${bottleneck} 秒</span></div>
+        <div>線平衡率：<span class="text-emerald-600 font-bold">${efficiency}%</span>（平衡損失 ${loss}%）</div>
+        </div>
+        `;
+        }
+    </script>
+</body>
+</html>
